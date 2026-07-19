@@ -48,8 +48,9 @@ class ReminderService {
       if (!now.isAfter(bill.dueDate)) continue;
 
       final tenant = tenantsById[bill.tenantId];
-      final tenantLabel =
-          tenant == null ? 'A tenant' : '${tenant.name} (Room ${tenant.room})';
+      // Bill left behind by a deleted tenant — nothing to remind about.
+      if (tenant == null) continue;
+      final tenantLabel = '${tenant.name} (Room ${tenant.room})';
       reminders.add(AppNotification(
         id: 'reminder-unpaid-${bill.id}',
         title: 'Unpaid bill reminder',

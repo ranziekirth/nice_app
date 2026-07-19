@@ -366,9 +366,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDashboard(List<Tenant> tenants, List<Bill> bills) {
+  Widget _buildDashboard(List<Tenant> tenants, List<Bill> allBills) {
     final now = DateTime.now();
     final monthName = AppData.monthNames[now.month - 1];
+
+    // Only count bills that still belong to an existing tenant — bills left
+    // behind by a deleted tenant shouldn't inflate the dashboard totals.
+    final tenantIds = {for (final t in tenants) t.id};
+    final bills =
+        allBills.where((b) => tenantIds.contains(b.tenantId)).toList();
+
     final monthBills = bills
         .where((b) => b.month == monthName && b.year == now.year)
         .toList();

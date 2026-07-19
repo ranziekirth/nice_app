@@ -47,8 +47,19 @@ class FirestoreService {
     return _userDoc.collection('tenants').add(tenant.toMap());
   }
 
-  static Future<void> deleteTenant(String tenantId) {
-    return _userDoc.collection('tenants').doc(tenantId).delete();
+  /// Removes the tenant along with every bill that belongs to them, so
+  /// dashboard totals and reminders don't keep counting orphaned bills.
+  static Future<void> deleteTenant(String tenantId) async {
+    final bills = await _userDoc
+        .collection('bills')
+        .where('tenantId', isEqualTo: tenantId)
+        .get();
+    final batch = _db.batch();
+    for (final doc in bills.docs) {
+      batch.delete(doc.reference);
+    }
+    batch.delete(_userDoc.collection('tenants').doc(tenantId));
+    await batch.commit();
   }
 
   static Future<void> updateTenant(String tenantId,
