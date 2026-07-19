@@ -1,0 +1,28 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Everything for a given account lives under users/{uid}/... — only
+    // that signed-in user may read or write their own subtree, so accounts
+    // never see each other's tenants, bills, notes, notifications or settings.
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // App reviews live in a shared top-level collection so the admin can see
+    // all of them. Any signed-in user may CREATE a review (only as
+    // themselves, with a valid 1-5 rating); only the admin account may READ
+    // or delete. Nobody can edit a review after it's sent.
+    // Keep this email list in sync with AuthService.adminEmails.
+    match /feedback/{feedbackId} {
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow read, delete: if request.auth != null
+        && request.auth.token.email in ['ranziekirthcahulugan@gmail.com'];
+      allow update: if false;
+    }
+  }
+}

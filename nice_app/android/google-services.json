@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "494420792136",
+    "project_id": "niceapp-35913",
+    "storage_bucket": "niceapp-35913.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494420792136:android:abc25b6fd82491e908d97d",
+        "android_client_info": {
+          "package_name": "com.company.niceapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKJ_APsVtI4wmmMVodQ14xca9Dz4_JNaY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
